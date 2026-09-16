@@ -1,5 +1,5 @@
-import productModel from "../models/product.model"
-import { uploadFiles } from "../services/storage.service"
+import productModel from "../models/product.model.js"
+import { uploadFiles } from "../services/storage.service.js"
 
 
 export const createProduct = async (req, res) => {

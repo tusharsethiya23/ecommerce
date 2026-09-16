@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { validateRequest } from "../utils/validator";
+import { validateRequest } from "../utils/validator.js";
 
 export const productValidator = [
     body("title")
