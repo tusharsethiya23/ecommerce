@@ -8,12 +8,17 @@ const client = new ImageKit(
 )
 
 export  const uploadFiles = async(file, fileName)=>{
-    const respnse = await client.files.upload(
+    const response = await client.files.upload(
         {
             file,
             fileName,
             folder:"/snitch"
         }
     )
-    return respnse
+    return response
+}
+
+export const deleteFile = async(id)=>{
+    const response = await client.files.delete(id)
+    return response
 }

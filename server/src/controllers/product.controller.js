@@ -1,5 +1,5 @@
 import productModel from "../models/product.model.js"
-import { uploadFiles } from "../services/storage.service.js"
+import { deleteFile, uploadFiles } from "../services/storage.service.js"
 
 
 export const createProduct = async (req, res) => {
@@ -16,7 +16,7 @@ export const createProduct = async (req, res) => {
 
     const files = req.files
 
-    if (!files || files.length === 0) {
+    if (!req.files || req.files.length === 0) {
         errors.push({
             field: "images",
             message: "atleast one image is required"
@@ -112,11 +112,11 @@ export const updateProduct = async (req, res) => {
 
             return {
                 url: response.url,
-                imageKitId: response.fileId,
+                imagekitId: response.fileId,
                 order: product.images.length + index + 1
             }
+            
         }))
-
         product.images.push(...urls)
     }
 
@@ -156,32 +156,35 @@ export const deleteImages = async (req, res) => {
         return res.status(400).json({ message: "you are not authorized to delete images" })
     }
 
-    const {productId, imageId} = req.params
+    const { productId, imageId } = req.params
 
-    const product = await productModel.findOne ({_id:productId})
+    const product = await productModel.findOne({ _id: productId })
 
-    if(!product){
-        return res.status(404).json({message:"product not found"})
+    if (!product) {
+        return res.status(404).json({ message: "product not found" })
     }
 
-    if(user.id !== product.seller.toString()){
-        return res.status(403).json({message:"You are not authorized to do changes in this product"})
+    if (user.id !== product.seller.toString()) {
+        return res.status(403).json({ message: "You are not authorized to do changes in this product" })
     }
 
+    const fileId = product.images.id(imageId)
+
+    await deleteFile(fileId.imagekitId)
     await productModel.findOneAndUpdate(
         {
-            _id:productId
+            _id: productId
         },
         {
-            $pull:{
-                images:{
-                    _id:imageId
+            $pull: {
+                images: {
+                    _id: imageId
                 }
             }
         }
     )
 
-    return res.status(200).json({message:"Image deleted successfully"})
+    return res.status(200).json({ message: "Image deleted successfully" })
 
 
 }
@@ -228,62 +231,64 @@ export const togglePublishProduct = async (req, res) => {
     })
 }
 
-export const getProductsBySeller = async(req,res)=>{
+export const getProductsBySeller = async (req, res) => {
 
     const user = req.user
 
-    if(user.role !== 'seller'){
-        return res.status(403).json({messsge:"only seller are authorized to see their products"})
+    if (user.role !== 'seller') {
+        return res.status(403).json({ messsge: "only seller are authorized to see their products" })
     }
 
 
-    const totalProducts = await productModel.countDocuments({seller:user.id})
+    const totalProducts = await productModel.countDocuments({ seller: user.id })
 
 
-    const totalPages = Math.ceil(totalProducts/5)
+    const totalPages = Math.ceil(totalProducts / 5)
 
-    const page = req.query.page? Math.min(parseInt(req.query.page),totalPages):1
+    const page = req.query.page ? Math.min(parseInt(req.query.page), totalPages) : 1
 
-    const skip= 5 *(page-1)
+    const skip = 5 * (page - 1)
 
-    const products = await productModel.find({seller:user.id})
-    .skip(skip)
-    .limit(5)
+    const products = await productModel.find({ seller: user.id })
+        .skip(skip)
+        .limit(5)
 
 
-    return res.status(200).json({message:"products retrieved successfully",
-        data:{
-            products:{
-                products:products,
-                totalPages:totalPages,
-                currentPage:page
+    return res.status(200).json({
+        message: "products retrieved successfully",
+        data: {
+            products: {
+                products: products,
+                totalPages: totalPages,
+                currentPage: page
 
             }
         }
     },)
-    
+
 }
 
-export const getProducts = async(req,res)=>{
-    
+export const getProducts = async (req, res) => {
+
     const totalProducts = await productModel.countDocuments()
 
-    const totalPages = Math.ceil(totalProducts/20)
+    const totalPages = Math.ceil(totalProducts / 20)
 
-    const page = req.query.page? Math.min(parseInt(req.query.page),totalPages):1
+    const page = req.query.page ? Math.min(parseInt(req.query.page), totalPages) : 1
 
-    const skip = 20 * (page-1)
+    const skip = 20 * (page - 1)
 
-    const products = await productModel.find({isPublished:true})
-    .skip(skip)
-    .limit(20)
+    const products = await productModel.find({ isPublished: true })
+        .skip(skip)
+        .limit(20)
 
-    return res.status(200).json({message:"products retrieved successfully", 
-        data:{
-            produts:{
-                products :products,
-                totalPages:totalPages,
-                currentPage : page
+    return res.status(200).json({
+        message: "products retrieved successfully",
+        data: {
+            produts: {
+                products: products,
+                totalPages: totalPages,
+                currentPage: page
             }
         }
     })

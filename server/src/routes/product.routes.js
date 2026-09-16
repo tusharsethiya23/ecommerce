@@ -20,7 +20,8 @@ routes.post("/", upload.array("images", 5),
     , productValidator,
     createProduct)
 
-routes.post("/updateProduct/:productId",
+
+routes.patch("/update/:productId",
     upload.array("images", 5),
     ((req, res, next) => {
         if (req.body.categories) req.body.categories = JSON.parse(req.body.categories)
@@ -28,11 +29,12 @@ routes.post("/updateProduct/:productId",
         if (req.body.sizes) req.body.sizes = JSON.parse(req.body.sizes)
         next()
     }),
-      authMiddleware,
+    authMiddleware,
     updateProductValidator,
     updateProduct)
 
-routes.delete("/deleteImages/:productId/:imageId", authMiddleware, deleteImages)
+
+routes.delete("/deleteImage/:productId/:imageId", authMiddleware, deleteImages)
 
 routes.post("/publishProduct/:productId", authMiddleware, togglePublishProduct)
 
