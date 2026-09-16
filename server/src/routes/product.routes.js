@@ -36,7 +36,7 @@ routes.patch("/update/:productId",
 
 routes.delete("/deleteImage/:productId/:imageId", authMiddleware, deleteImages)
 
-routes.post("/publishProduct/:productId", authMiddleware, togglePublishProduct)
+routes.patch("/publishProduct/:productId", authMiddleware, togglePublishProduct)
 
 routes.get("/bySeller", authMiddleware, getProductsBySeller)
 routes.get("/", getProducts)
