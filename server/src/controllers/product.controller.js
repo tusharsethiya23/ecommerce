@@ -214,7 +214,7 @@ export const togglePublishProduct = async (req, res) => {
             _id: productId
         },
         {
-            isPublished: !isPublished
+            isPublished: !product.isPublished
         }
     )
 
@@ -224,7 +224,7 @@ export const togglePublishProduct = async (req, res) => {
             "product published successfully",
         data: {
             product: {
-                id: _product._id,
+                id: product._id,
                 isPublished: !product.isPublished
             }
         }
