@@ -10,7 +10,7 @@ const cartSchema = new mongoose.Schema(
             {
                 product: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: "products",
+                    ref: "product",
                     required: true
                 },
                 quantity: {
@@ -20,7 +20,7 @@ const cartSchema = new mongoose.Schema(
                 },
                 size: {
                     type: String,
-                    requird: true,
+                    required: true,
                     enum: ["XS", "S", "M", "L", "XL", "XXL"]
                 }
             }

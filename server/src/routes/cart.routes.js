@@ -1,7 +1,7 @@
 import express from 'express'
 import { authMiddleware } from '../middleware/auth.middleware.js'
 import { addToCartValidator, removeFromCartValidator } from '../validators/cart.validator.js'
-import { addToCart, removeFromCart } from '../controllers/cart.controller.js'
+import { addToCart, getCartProducts, removeFromCart } from '../controllers/cart.controller.js'
 
 const routes = express.Router()
 
@@ -21,5 +21,7 @@ PATH: api/cart
  */
 
 routes.delete("/remove/product/:productId", removeFromCartValidator ,removeFromCart)
+
+routes.get("/", getCartProducts)
 
 export default routes
