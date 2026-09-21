@@ -112,11 +112,28 @@ export const createOrder = async (req, res) => {
     )
 
     return res.status(200).json({
-        message: "ordered retrieved successfully",
+        message: "ordered placed successfully",
         data: {
             order
         }
     })
 
+
+}
+
+
+export const getOrders = async (req,res)=>{
+
+    const user = req.user
+
+    const orders = await orderModel.find(
+        {
+            user:user.id
+        }
+    ).sort({createdAt:-1})
+
+    return res.status(200).json({message:"order retrieved successfully",
+        data:orders
+    })
 
 }
