@@ -137,3 +137,43 @@ export const getOrders = async (req,res)=>{
     })
 
 }
+
+
+export const cancelOrder = async(req,res)=>{
+
+    const user = req.user
+    const {orderId} = req.params
+
+    const order = await orderModel.findOne({_id: orderId})
+
+    if(!order){
+        return res.status(404).json({message:"order not found."})
+    }
+
+    if(order.user.toString() !== user.id){
+        return res.status(403).json({message:"You are not authorized to cancel this order"})
+    }
+
+    if(order.status == 'CANCELLED'){
+        return res.status(400).json({message:"order is already cancelled"})
+    }
+
+    if(["SHIPPED","DELIVERED"].includes(order.status)){
+        return res.status(400).json({message:"order cannot be cancelled as order is already" + order.status })
+    }
+
+    await orderModel.findOneAndUpdate(
+        {
+            _id:orderId
+        },
+        {
+            $set:{status:'CANCELLED'}
+        }
+    )
+
+    return res.status(200).json({
+        message:"order cancelled successfully"
+    })
+
+
+}
