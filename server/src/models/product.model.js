@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true,
             minLength: 10,
-            maxLength: 100
+            maxLength: 1000
         },
         categories: [
             {
@@ -78,8 +78,6 @@ const productSchema = new mongoose.Schema(
 
         }
         
-
-
     },
     {
         timestamps:true
